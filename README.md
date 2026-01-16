@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
+  <h1>🍕 BMSCE Canteen Connect</h1>
+  <p><strong>A modern food ordering platform for BMSCE campus canteens</strong></p>
+</div>
 
-## Getting Started
+---
 
-First, run the development server:
+## ✨ Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <h3>🛒 Easy Ordering</h3>
+      <p>Browse menus from 3 canteens, add items to cart, and checkout seamlessly</p>
+    </td>
+    <td align="center" width="33%">
+      <h3>💳 Secure Payments</h3>
+      <p>Integrated Razorpay for safe and fast UPI/Card payments</p>
+    </td>
+    <td align="center" width="33%">
+      <h3>📊 Admin Dashboard</h3>
+      <p>Canteen owners can view analytics and track revenue</p>
+    </td>
+  </tr>
+</table>
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🏪 Supported Canteens
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Canteen | Location |
+|---------|----------|
+| **Vidyarthi Khaana** | Next to the indoor stadium |
+| **SRS CAFE** | Next to Vidyarthi Khaana |
+| **Sip and Snack** | PJ Block (1st Floor) |
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 📱 How to Use
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### For Students
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Visit** the website
+2. **Sign in** with your Google account
+3. **Select** a canteen
+4. **Browse** the menu and add items to cart
+5. **Checkout** with Razorpay (UPI/Card)
+6. **Pick up** your order when ready!
 
-## Deploy on Vercel
+### For Canteen Admins
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Sign in** with your registered admin email
+2. **Click** the ⚙️ gear icon in the navbar
+3. **View** your dashboard with revenue and order statistics
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+<div align="center">
+  <p>Made with ❤️ for BMSCE Campus</p>
+</div>
