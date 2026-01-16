@@ -81,7 +81,7 @@ export default function AdminOrders() {
         setError(queryError.message)
       } else {
         console.log('Orders fetched:', data)
-        setOrders((data as OrderData[]) || [])
+        setOrders((data as unknown as OrderData[]) || [])
       }
     } catch (err) {
       console.error('Fetch error:', err)
