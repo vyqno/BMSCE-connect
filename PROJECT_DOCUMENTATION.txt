@@ -1,0 +1,228 @@
+================================================================================
+                    BMSCE CANTEEN CONNECT - PROJECT DOCUMENTATION
+================================================================================
+
+1. INTRODUCTION
+--------------------------------------------------------------------------------
+BMSCE Canteen Connect is a modern web-based food ordering platform designed for 
+BMSCE campus canteens. It allows students to browse menus, place orders, and 
+make payments online, reducing waiting times and improving the overall dining 
+experience.
+
+2. ABOUT THE PROJECT
+--------------------------------------------------------------------------------
+The platform connects 3 campus canteens with students through a unified ordering
+system:
+- Vidyarthi Khaana (Near indoor stadium)
+- SRS CAFE (Next to Vidyarthi Khaana)
+- Sip and Snack (PJ Block, 1st Floor)
+
+Key Features:
+- Google OAuth authentication for secure login
+- Browse menus by category across all canteens
+- Add items to cart with quantity management
+- Secure online payments via Razorpay (UPI/Card)
+- Order history tracking for students
+- Admin dashboard for canteen owners with analytics
+
+3. TECH STACK USED
+--------------------------------------------------------------------------------
+FRONTEND:
+- Next.js 15 (React Framework)
+- TypeScript (Type-safe JavaScript)
+- Tailwind CSS (Styling)
+- shadcn/ui (UI Components)
+- Framer Motion (Animations)
+- Lucide React (Icons)
+
+BACKEND:
+- Supabase (PostgreSQL Database + Authentication)
+- Next.js API Routes (Server Functions)
+- Row Level Security (RLS) for data protection
+
+PAYMENT:
+- Razorpay Payment Gateway
+
+DEPLOYMENT:
+- Vercel (Hosting Platform)
+
+4. REQUIREMENTS
+--------------------------------------------------------------------------------
+FUNCTIONAL REQUIREMENTS:
+- User registration and login via Google OAuth
+- Browse canteen menus with category filters
+- Search functionality for food items
+- Shopping cart with add/remove/update quantity
+- Checkout with phone number and table number validation
+- Online payment processing
+- Order confirmation and success page
+- Order history view for users
+- Admin dashboard for canteen owners
+- Analytics (revenue, order count, popular items)
+
+NON-FUNCTIONAL REQUIREMENTS:
+- Responsive design for mobile and desktop
+- Fast page load times
+- Secure payment processing
+- Real-time order updates
+- Role-based access control
+
+5. ER DIAGRAM (Entity Relationship)
+--------------------------------------------------------------------------------
+
+    ┌─────────────┐         ┌─────────────┐
+    │   USERS     │         │  CANTEENS   │
+    │ (profiles)  │         │             │
+    ├─────────────┤         ├─────────────┤
+    │ id (PK)     │         │ id (PK)     │
+    │ email       │         │ name        │
+    │ full_name   │         │ location    │
+    │ phone       │    ┌────│ created_at  │
+    │ role        │    │    └─────────────┘
+    │ admin_      │────┘           │
+    │ canteen_id  │                │
+    └──────┬──────┘                │
+           │                       │
+           │ 1:N                   │ 1:N
+           │                       │
+    ┌──────▼──────┐         ┌──────▼──────┐
+    │   ORDERS    │         │ MENU_ITEMS  │
+    ├─────────────┤         ├─────────────┤
+    │ id (PK)     │         │ id (PK)     │
+    │ user_id(FK) │         │ canteen_id  │
+    │ canteen_id  │         │ name        │
+    │ total_amount│         │ price       │
+    │ status      │         │ category    │
+    │ payment_    │         │ is_available│
+    │ status      │         └─────────────┘
+    │ razorpay_*  │                │
+    └──────┬──────┘                │
+           │                       │
+           │ 1:N                   │
+           │                       │
+    ┌──────▼──────┐                │
+    │ ORDER_ITEMS │                │
+    ├─────────────┤                │
+    │ id (PK)     │                │
+    │ order_id(FK)│────────────────┘
+    │ menu_item_id│
+    │ quantity    │
+    │ price_at_   │
+    │ time        │
+    └─────────────┘
+
+6. DATABASE SCHEMA
+--------------------------------------------------------------------------------
+
+TABLE: profiles
+- id           UUID (PK, references auth.users)
+- email        TEXT
+- phone        TEXT
+- full_name    TEXT
+- role         TEXT (DEFAULT 'user') -- 'user' or 'admin'
+- admin_canteen_id  UUID (FK to canteens) -- NULL for regular users
+- created_at   TIMESTAMPTZ
+- updated_at   TIMESTAMPTZ
+
+TABLE: canteens
+- id           UUID (PK)
+- name         TEXT (NOT NULL)
+- location     TEXT
+- created_at   TIMESTAMPTZ
+
+TABLE: menu_items
+- id           UUID (PK)
+- canteen_id   UUID (FK to canteens)
+- name         TEXT (NOT NULL)
+- description  TEXT
+- price        NUMERIC (NOT NULL)
+- category     TEXT
+- is_available BOOLEAN (DEFAULT true)
+- created_at   TIMESTAMPTZ
+
+TABLE: orders
+- id               UUID (PK)
+- user_id          UUID (FK to profiles)
+- canteen_id       UUID (FK to canteens)
+- total_amount     NUMERIC (NOT NULL)
+- status           TEXT (DEFAULT 'pending') -- pending/preparing/ready/completed
+- payment_status   TEXT (DEFAULT 'pending') -- pending/paid/failed
+- razorpay_order_id      TEXT
+- razorpay_payment_id    TEXT
+- razorpay_signature     TEXT
+- created_at       TIMESTAMPTZ
+
+TABLE: order_items
+- id              UUID (PK)
+- order_id        UUID (FK to orders)
+- menu_item_id    UUID (FK to menu_items)
+- quantity        INTEGER (NOT NULL)
+- price_at_time   NUMERIC (NOT NULL)
+
+7. BACKEND DESIGN
+--------------------------------------------------------------------------------
+
+AUTHENTICATION FLOW:
+1. User clicks "Sign in with Google"
+2. Redirected to Google OAuth consent screen
+3. After consent, redirected to /auth/callback
+4. Supabase creates session and profile
+5. Trigger auto-assigns admin role for specific emails
+
+API ROUTES:
+POST /api/razorpay/order   - Create Razorpay payment order
+POST /api/razorpay/verify  - Verify payment signature
+
+DATA FLOW (Order Placement):
+1. User adds items to cart (stored in Zustand state)
+2. User proceeds to checkout
+3. Frontend calls /api/razorpay/order to create payment
+4. Razorpay modal opens for payment
+5. On success, calls /api/razorpay/verify
+6. If verified, order inserted into Supabase database
+7. User redirected to success page
+
+SECURITY:
+- Row Level Security (RLS) on all tables
+- Users can only view/modify their own data
+- Admins can only access their assigned canteen's data
+- Payment verification using HMAC SHA256 signatures
+
+8. FUTURE ENHANCEMENTS
+--------------------------------------------------------------------------------
+- Real-time order status notifications (push notifications)
+- QR code based table ordering
+- Loyalty points and rewards system
+- Multiple payment gateway options (Paytm, PhonePe)
+- Order scheduling (pre-order for specific time)
+- Canteen inventory management
+- Daily/weekly menu specials
+- Student feedback and ratings system
+- Mobile app (React Native)
+- Integration with college ERP for student verification
+
+9. CONCLUSION
+--------------------------------------------------------------------------------
+BMSCE Canteen Connect successfully addresses the challenges of traditional 
+canteen ordering by providing a digital solution that benefits both students 
+and canteen owners. 
+
+Students enjoy:
+- Reduced waiting times
+- Easy menu browsing
+- Secure digital payments
+- Order history tracking
+
+Canteen owners benefit from:
+- Streamlined order management
+- Revenue analytics
+- Reduced cash handling
+- Better customer insights
+
+The project demonstrates practical implementation of modern web technologies
+including Next.js, TypeScript, Supabase, and Razorpay, following best practices
+in authentication, database design, and payment security.
+
+================================================================================
+                              END OF DOCUMENTATION
+================================================================================

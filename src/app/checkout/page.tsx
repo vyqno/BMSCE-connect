@@ -149,6 +149,8 @@ export default function CheckoutPage() {
           name: user.user_metadata?.full_name,
           email: user.email,
           contact: formData.phone,
+          // 👇 ADD YOUR UPI ID HERE (replace with your actual UPI)
+          vpa: '9900455775@ibl',  // Example: 'john@oksbi', 'shop@paytm', '9876543210@ybl'
         },
         theme: {
           color: '#ea580c',
